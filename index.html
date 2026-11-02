@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080d18">
+<title>JARVIS | Ady's Assistant</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#080d18;color:#eaf1ff;
+ font-family:Arial,sans-serif;min-height:100vh;
+ display:flex;justify-content:center;align-items:center;
+ padding:20px
+}
+.app{width:100%;max-width:480px;text-align:center}
+.logo{
+ width:100px;height:100px;border-radius:50%;
+ border:2px solid #35c9ff;margin:25px auto;
+ display:grid;place-items:center;
+ font-size:42px;box-shadow:0 0 35px #168acb66
+}
+h1{letter-spacing:7px;color:#48cfff}
+.sub{color:#9aabc5;font-size:14px}
+.status{margin:30px 0;color:#52e5bd}
+button{
+ border:0;border-radius:30px;padding:16px 25px;
+ background:#087eb5;color:white;font-size:16px;
+ margin:8px;cursor:pointer
+}
+.mic{width:90px;height:90px;font-size:32px}
+input{
+ width:100%;padding:16px;border-radius:14px;
+ border:1px solid #29415c;background:#101b2d;
+ color:white;font-size:16px;margin-top:25px
+}
+.reply{
+ background:#101b2d;border:1px solid #29415c;
+ border-radius:16px;padding:18px;margin-top:25px;
+ text-align:left;min-height:90px;line-height:1.6
+}
+.small{color:#8395b0;font-size:12px;margin-top:30px}
+</style>
+</head>
+<body>
+<div class="app">
+ <div class="logo">◈</div>
+ <h1>J.A.R.V.I.S</h1>
+ <div class="sub">PERSONAL AI ASSISTANT</div>
+ <div class="status" id="status">● SYSTEM ONLINE</div>
+ <p>Good day, Ady. I'm ready.</p>
+ <button class="mic" onclick="listen()">🎙️</button>
+ <p>Tap the microphone and speak</p>
+ <input id="message" placeholder="Type your message here...">
+ <button onclick="send()">Send</button>
+ <div class="reply" id="reply">
+  <b>JARVIS:</b><br>
+  Your assistant interface is ready. AI connection is coming next.
+ </div>
+ <div class="small">PROJECT JARVIS ADY · VERSION 1.0</div>
+</div>
+<script>
+function speak(text){
+ const voice=new SpeechSynthesisUtterance(text);
+ voice.lang="hi-IN";
+ speechSynthesis.speak(voice);
+}
+function send(){
+ const box=document.getElementById("message");
+ const msg=box.value.trim();
+ if(!msg)return;
+ document.getElementById("reply").innerHTML=
+ "<b>YOU:</b><br>"+escapeText(msg)+
+ "<br><br><b>JARVIS:</b><br>"+
+ "I received your message, Ady. My AI brain will be connected in the next step.";
+ box.value="";
+}
+function escapeText(s){
+ const d=document.createElement("div");
+ d.textContent=s;
+ return d.innerHTML;
+}
+function listen(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){
+  alert("Voice recognition is not supported. Please use Chrome.");
+  return;
+ }
+ const rec=new SR();
+ rec.lang="hi-IN";
+ rec.onstart=()=>document.getElementById("status").textContent="● LISTENING...";
+ rec.onresult=e=>{
+  document.getElementById("message").value=e.results[0][0].transcript;
+  send();
+ };
+ rec.onerror=()=>document.getElementById("status").textContent="● TRY AGAIN";
+ rec.onend=()=>document.getElementById("status").textContent="● SYSTEM ONLINE";
+ rec.start();
+}
+</script>
+</body>
+</html>
